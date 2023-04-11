@@ -48,7 +48,7 @@ function Scene() {
     dollyGrp: buttonGroup({
       label: 'dolly',
       opts: {
-        '1': () => cameraControlsRef.current?.dolly(1, true),
+        1: () => cameraControlsRef.current?.dolly(1, true),
         '-1': () => cameraControlsRef.current?.dolly(-1, true)
       }
     }),
@@ -90,6 +90,12 @@ function Scene() {
       },
       { collapsed: true }
     ),
+    setUpVector: folder(
+      {
+        setUpVector: button((_get) => cameraControlsRef.current?.camera.up.set(0, 0, 1))
+      },
+      { collapsed: true }
+    ),
     lerpLookAt: folder(
       {
         vec6: { value: [-2, 0, 0], label: 'posA' },
@@ -122,11 +128,14 @@ function Scene() {
   return (
     <>
       <group position-y={-0.5}>
+        {orthographic && <OrthographicCamera makeDefault position={[0, 0, 10]} near={0.00001} zoom={10} />}
+
+        {/* <OrthographicCamera makeDefault top={10} bottom={-10} left={10} right={-10} near={1} far={2000} position={[0, 1, 0]} /> */}
         <Center top>
           <Suzi ref={meshRef} rotation={[-0.63, 0, 0]} />
         </Center>
         <Ground />
-        <Shadows />
+        {/* <Shadows /> */}
         <CameraControls
           ref={cameraControlsRef}
           minDistance={minDistance}
@@ -134,9 +143,7 @@ function Scene() {
           verticalDragToForward={verticalDragToForward}
           dollyToCursor={dollyToCursor}
           infinityDolly={infinityDolly}
-          orthographic={orthographic}
         />
-        <OrthographicCamera makeDefault zoom={1} top={200} bottom={-200} left={200} right={-200} near={1} far={2000} position={[0, 10, 0]} />
         <Environment preset="city" />
       </group>
     </>
