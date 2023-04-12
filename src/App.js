@@ -1,5 +1,5 @@
 import * as THREE from 'three'
-import { memo, useRef, forwardRef } from 'react'
+import { memo, useRef, forwardRef, useState } from 'react'
 import { Canvas, useThree } from '@react-three/fiber'
 import {
   OrthographicCamera,
@@ -16,19 +16,28 @@ import { useControls, button, buttonGroup, folder } from 'leva'
 
 const { DEG2RAD } = THREE.MathUtils
 
+const yUp = new THREE.Vector3(0, 1, 0)
+const zUp = new THREE.Vector3(0, 0, 1)
+
 export default function App() {
   return (
-    <Canvas shadows camera={{ position: [0, 0, 5], fov: 60 }}>
+    <Canvas shadows>
       <Scene />
     </Canvas>
   )
 }
 
 function Scene() {
+  const [upVector, setUpVector] = useState(yUp)
   const meshRef = useRef()
   const cameraControlsRef = useRef()
 
   const { camera } = useThree()
+
+  console.log('upVector: ', upVector)
+
+  camera.up.copy(upVector)
+  cameraControlsRef.current?.updateCameraUp()
 
   // All same options as the original "basic" example: https://yomotsu.github.io/camera-controls/examples/basic.html
   const { minDistance, enabled, verticalDragToForward, dollyToCursor, infinityDolly, orthographic } = useControls({
@@ -102,7 +111,8 @@ function Scene() {
     ),
     setUpVector: folder(
       {
-        setUpVector: button((_get) => cameraControlsRef.current?.camera.up.set(0, 0, 1))
+        yUp: button((_get) => setUpVector(yUp)),
+        zUp: button((_get) => setUpVector(zUp))
       },
       { collapsed: true }
     ),
@@ -138,7 +148,11 @@ function Scene() {
   return (
     <>
       <group position-y={-0.5}>
-        {orthographic ? <OrthographicCamera makeDefault position={[0, 0, 10]} near={0.00001} zoom={200} /> : <PerspectiveCamera />}
+        {orthographic ? (
+          <OrthographicCamera makeDefault position={[0, 0, 10]} near={0.00001} zoom={200} />
+        ) : (
+          <PerspectiveCamera position={[0, 0, 5]} fov={60} />
+        )}
         <Center top>
           <Suzi ref={meshRef} rotation={[-0.63, 0, 0]} />
         </Center>
