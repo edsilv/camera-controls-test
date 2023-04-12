@@ -1,7 +1,17 @@
 import * as THREE from 'three'
 import { memo, useRef, forwardRef } from 'react'
 import { Canvas, useThree } from '@react-three/fiber'
-import { OrthographicCamera, Grid, Center, AccumulativeShadows, RandomizedLight, Environment, useGLTF, CameraControls } from '@react-three/drei'
+import {
+  OrthographicCamera,
+  PerspectiveCamera,
+  Grid,
+  Center,
+  AccumulativeShadows,
+  RandomizedLight,
+  Environment,
+  useGLTF,
+  CameraControls
+} from '@react-three/drei'
 import { useControls, button, buttonGroup, folder } from 'leva'
 
 const { DEG2RAD } = THREE.MathUtils
@@ -128,9 +138,7 @@ function Scene() {
   return (
     <>
       <group position-y={-0.5}>
-        {orthographic && <OrthographicCamera makeDefault position={[0, 0, 10]} near={0.00001} zoom={10} />}
-
-        {/* <OrthographicCamera makeDefault top={10} bottom={-10} left={10} right={-10} near={1} far={2000} position={[0, 1, 0]} /> */}
+        {orthographic ? <OrthographicCamera makeDefault position={[0, 0, 10]} near={0.00001} zoom={200} /> : <PerspectiveCamera />}
         <Center top>
           <Suzi ref={meshRef} rotation={[-0.63, 0, 0]} />
         </Center>
