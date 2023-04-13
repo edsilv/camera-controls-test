@@ -17,7 +17,7 @@ import { useControls, button, buttonGroup, folder } from 'leva'
 const { DEG2RAD } = THREE.MathUtils
 
 const yUp = new THREE.Vector3(0, 1, 0)
-const zUp = new THREE.Vector3(0, 0, 1)
+const zUp = new THREE.Vector3(0, 0, -1)
 
 export default function App() {
   return (
@@ -34,13 +34,11 @@ function Scene() {
 
   const { camera } = useThree()
 
-  console.log('upVector: ', upVector)
-
   camera.up.copy(upVector)
   cameraControlsRef.current?.updateCameraUp()
 
   // All same options as the original "basic" example: https://yomotsu.github.io/camera-controls/examples/basic.html
-  const { minDistance, enabled, verticalDragToForward, dollyToCursor, infinityDolly, orthographic } = useControls({
+  const { minDistance, enabled, verticalDragToForward, dollyToCursor, infinityDolly, grid, orthographic } = useControls({
     thetaGrp: buttonGroup({
       label: 'rotate theta',
       opts: {
@@ -111,8 +109,8 @@ function Scene() {
     ),
     setUpVector: folder(
       {
-        yUp: button((_get) => setUpVector(yUp)),
-        zUp: button((_get) => setUpVector(zUp))
+        'y-up': button((_get) => setUpVector(yUp)),
+        'z-up': button((_get) => setUpVector(zUp))
       },
       { collapsed: true }
     ),
@@ -139,6 +137,7 @@ function Scene() {
     saveState: button(() => cameraControlsRef.current?.saveState()),
     reset: button(() => cameraControlsRef.current?.reset(true)),
     enabled: { value: true, label: 'controls on' },
+    grid: { value: true, label: 'grid on' },
     orthographic: { value: false, label: 'orthographic' },
     verticalDragToForward: { value: false, label: 'vert. drag to move forward' },
     dollyToCursor: { value: false, label: 'dolly to cursor' },
@@ -156,7 +155,7 @@ function Scene() {
         <Center top>
           <Suzi ref={meshRef} rotation={[-0.63, 0, 0]} />
         </Center>
-        <Ground />
+        {grid && <Ground />}
         {/* <Shadows /> */}
         <CameraControls
           ref={cameraControlsRef}
